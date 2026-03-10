@@ -412,7 +412,6 @@ app.get('/like/:id', isLoggedIn, async (req, res)=> { //protected route
 
 ```
 
-
 3. Change profile.ejs code for like feature
 ```
 <small class="mt-2 inline-block"> <%= post.likes.length %> likes</small>
@@ -471,4 +470,82 @@ app.post('/update/:id', isLoggedIn, async (req, res)=> { //protected route
 });
 ```
 
+
+
+
+
+
+
+
+### Part 3
+
+## Multer
+
+1. Search multer on npm website
+`https://www.npmjs.com/package/multer`
+
+2. It can manage any type of file, we can use multer for handling txt, jpg, pdf etc files. Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files
+
+3. Create /test route and create test.ejs (dummy)
+```
+app.get('/test', (req, res)=> {
+    res.render("test");
+});
+```
+
+4. enctype="multipart/form-data" this should be in form 
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="w-full bg-zinc-900 min-h-screen text-white p-10"> 
+        <h3 class="text-3xl mb-5">Upload Files</h3>
+        <form autocomplete="off" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="image">
+            <input class='px-5 py-2 rounded-md outline-none border-2 border-zinc-600 bg-blue-700' type="submit" value="Upload File">
+        </form>
+    </div>
+    
+</body>
+</html>
+```
+
+5. create upload route 
+    * ```npm i multer```
+    * Create a public folder, in that create stylesheets, javascripts and images folder in that, also create uploads folder in images.
+    * require crypto, multer and path package
+    ```
+    const crypto = require('crypto');
+    const path = require('path');
+    const multer = require('multer');
+    ```
+    * We need disk storage first so add this code from npm website into app.js after cookie parser anywhere
+    ```
+    const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/images/uploads')
+  },
+  filename: function (req, file, cb) {
+    crypto.randomBytes(12, function(err, bytes) {
+    const fn = bytes.toString('hex') + path.extname(file.originalname);
+    cb(null, fn);
+  })
+}
+});
+
+    const upload = multer({ storage: storage })
+    ```
+    
+    * add this upload route in app.js
+    ```
+    app.post('/upload', upload.single('image'), (req, res)=> {
+    console.log(req.file); //it adds file or files object to the request, file obj contains the file uploaded by the user
+    });
+    ```
 
