@@ -527,19 +527,8 @@ app.get('/test', (req, res)=> {
     ```
     * We need disk storage first so add this code from npm website into app.js after cookie parser anywhere
     ```
-    const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './public/images/uploads')
-  },
-  filename: function (req, file, cb) {
-    crypto.randomBytes(12, function(err, bytes) {
-    const fn = bytes.toString('hex') + path.extname(file.originalname);
-    cb(null, fn);
-  })
-}
-});
+ <img width="849" height="366" alt="image" src="https://github.com/user-attachments/assets/ce69b8ae-e808-4241-a2af-e0fea8aafa30" />
 
-    const upload = multer({ storage: storage })
     ```
     
     * add this upload route in app.js
