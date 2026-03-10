@@ -11,7 +11,12 @@
         <div class="w-full flex justify-end">
             <a class="p-3 mb-5 bg-red-400 rounded-md mb-5 inline-block " href="/logout">Logout</a>
         </div>
+        <div class="flex gap-5 items-center mb-2">
+            <div class="w-20 h-20 bg-red-500 rounded"> 
+                <img class="w-full h-full object-cover rounded" src="/images/uploads/<%= user.profilepic %>" alt="">
+            </div>
         <h3 class="text-3xl">Hello, <%= user.name %> 🙋🏻‍♀️</h3>
+        </div>
         <h5 class="text-zinc-500 mb-2">you can create a new post.</h5>
 
         <form action="/post" method="post">

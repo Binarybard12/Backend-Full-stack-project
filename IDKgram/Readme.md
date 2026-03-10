@@ -538,3 +538,99 @@ app.get('/test', (req, res)=> {
     });
     ```
 
+### part 4 - Folder Structure and use of multer
+
+## getting a proper folder structure
+
+1. remove test, upload routes and multer code from app.js file also the required const of multer
+
+2. create config folder in this project. And create a file names `multerconfig.js`
+
+3. add this code in multerconfig.js
+```
+const multer = require('multer');
+const path = require('path');
+const crypto = require('crypto');
+
+//diskstorage setup
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) { //folder setup of file
+    cb(null, '/public/images/uploads')
+  },
+
+  filename: function (req, file, cb) {
+    crypto.randomBytes(12, function(err, bytes) { // filename setup of file
+    const fn = bytes.toString('hex') + path.extname(file.originalname);
+    cb(null, fn);
+  })
+}
+})
+
+
+
+//export upload variable
+const upload = multer({ storage: storage });
+
+module.exports = upload;
+```
+
+## add profile pic static
+
+1. go to profile.ejs and add this to it's code
+```
+<div class="flex gap-5 items-center mb-2">
+            <div class="w-20 h-20 bg-red-500 rounded"> 
+                <img class="w-full h-full object-cover rounded" src="/images/uploads/<%= user.profilepic %>" alt="">
+            </div>
+        <h3 class="text-3xl">Hello, <%= user.name %> 🙋🏻‍♀️</h3>
+        </div>
+```
+
+2. in user.js give schema for profile picture
+```
+profilepic: {
+        type: String,
+        default: "default.jpg"
+    },
+```
+
+3. set express static files in app.js
+```
+app.use(express.static(path.join(__dirname, "public")));
+```
+## add profile pic dynamic
+
+1. create /profile/upload route
+```
+app.get('/profile/upload', isLoggedIn, (req, res)=> {
+    res.render("profileupload");
+});
+```
+
+2. rename test.ejs file to profileupload.ejs
+
+3. create /upload route in app.js
+```
+app.get('/upload', upload.single("image") , (req, res)=> {
+   
+});
+```
+
+4. require multerconfig as uppload
+```
+const upload = require('./config/multerconfig');
+```
+
+You will be able to upload the images in the folder 
+
+5. apply isloggedin()non /upload route
+
+```
+app.post('/upload',isLoggedIn, upload.single("image") , async(req, res)=> {
+   let user = await userModel.findOne({email: req.user.email});
+    user.profilepic = req.file.filename;
+    await user.save();
+    res.redirect("/profile");
+});
+```
+
